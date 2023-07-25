@@ -6,13 +6,8 @@ builds:
       - CGO_ENABLED=0
     goos:
       - linux
-      - windows
-      - darwin
     goarch:
       - amd64
-      - arm64
-      - ppc64le
-      - s390x
     dir: ./cmd/
     ldflags:
       - -X github.com/cloud-bulldozer/ingress-perf/pkg/version.GitCommit={{.Commit}} -X github.com/cloud-bulldozer/kube-burner/pkg/version.BuildDate={{.Date}} -X github.com/cloud-bulldozer/kube-burner/pkg/version.Version={{.Version}}
