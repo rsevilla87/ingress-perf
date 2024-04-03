@@ -1,5 +1,5 @@
 CONTAINER_BUILD ?= podman build --force-rm
-CONTAINER_NS ?= quay.io/cloud-bulldozer
+CONTAINER_NS ?= quay.io/rsevilla
 GIT_COMMIT = $(shell git rev-parse HEAD)
 
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
