@@ -43,6 +43,7 @@ import (
 	openshiftrouteclientset "github.com/openshift/client-go/route/clientset/versioned"
 	istioclient "istio.io/client-go/pkg/clientset/versioned"
 	"k8s.io/client-go/tools/clientcmd"
+	gatewayv1beta1 "sigs.k8s.io/gateway-api/apis/v1beta1"
 	gatewayApiClientset "sigs.k8s.io/gateway-api/pkg/client/clientset/versioned"
 )
 
@@ -150,6 +151,7 @@ func (r *Runner) Start() error {
 		log.Error("Error creating prometheus client")
 		return err
 	}
+	// TODO we shouldn't check haproxy version in gateway mode
 	clusterMetadata.HAProxyVersion, err = getHAProxyVersion()
 	if err != nil {
 		log.Errorf("Couldn't fetch haproxy version: %v", err)
@@ -303,6 +305,12 @@ func (r *Runner) deployAssets() error {
 	}
 	if r.gatewayApi {
 		log.Debugf("Creating GatewayClass...")
+		meta, _ := ocpmetadata.NewMetadata(restConfig)
+		domainName, err = meta.GetDefaultIngressDomain()
+		if err != nil {
+			return err
+		}
+		listenerHostName = gatewayv1beta1.Hostname("*.gwapi." + domainName)
 		_, err = hrClientSet.GatewayV1beta1().GatewayClasses().Create(context.TODO(), gatewayClass, metav1.CreateOptions{})
 		if err != nil && !errors.IsAlreadyExists(err) {
 			return err
